@@ -44,7 +44,7 @@ Material:
     - _FoamSpeed: 0.3
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _RefrectionScale: 3
+    - _RefrectionScale: 1
     - _RefrectionSpeed: 0.05
     - _RefrectionStrength: 1
     - _RippleDensity: 40.96
