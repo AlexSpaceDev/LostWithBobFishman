@@ -28,15 +28,15 @@ public class UIManager : MonoBehaviour
     public int diveTime = 60;
 
     [Header("Fish Counter UI")]
-    public TextMeshProUGUI fishCountText; // 🔹 Asigna tu TMP aquí
-    public Image fishIcon;                // 🔹 Asigna tu ícono de pez aquí
+    public TextMeshProUGUI fishCountText; // Asigna el TMP aquí
+    public Image fishIcon;                // Asigna el ícono de pez aquí
 
     [Header("Warning Message UI")]
 public TextMeshProUGUI warningText;
 
 
     private int fishCount = 0;
-    private bool hasDived = false; // 🧠 evita que el botón vuelva a aparecer después del buceo
+    private bool hasDived = false; // Evita que el botón vuelva a aparecer después del buceo
     private bool gameStarted = false;
     private Coroutine oxygenRoutine;
 
@@ -54,7 +54,7 @@ public TextMeshProUGUI warningText;
         if (oxygenTimerText != null)
             oxygenTimerText.gameObject.SetActive(false);
 
-        // 🔹 Ocultar contador al inicio
+        // Ocultar contador al inicio
         if (fishCountText != null)
             fishCountText.gameObject.SetActive(false);
         if (fishIcon != null)
@@ -80,14 +80,14 @@ public TextMeshProUGUI warningText;
     public void OnDiveButtonPressed()
     {
         if (diveButton != null)
-            diveButton.SetActive(false); // 🔹 Asegurar que desaparezca antes del fade
+            diveButton.SetActive(false); // Asegurar que desaparezca antes del fade
 
         StartCoroutine(DiveTransition());
     }
 
     private IEnumerator DiveTransition()
     {
-        hasDived = true; // 🧠 Marcar que ya se sumergió
+        hasDived = true; // Marcar que ya se sumergió
         float alpha = 0;
         while (alpha < 1)
         {
@@ -124,7 +124,7 @@ public TextMeshProUGUI warningText;
             fishSpawner.StartSpawning();
         }
 
-        // 🔹 Mostrar contador y cronómetro al sumergirse
+        // Mostrar contador y cronómetro al sumergirse
         if (fishCountText != null) fishCountText.gameObject.SetActive(true);
         if (fishIcon != null) fishIcon.gameObject.SetActive(true);
 
@@ -140,7 +140,7 @@ private IEnumerator StartOxygenTimer()
 
     oxygenTimerText.gameObject.SetActive(true);
     if (oxygenTimerIcon != null) 
-        oxygenTimerIcon.gameObject.SetActive(true); // 🆕 Mostrar imagen del cronómetro
+        oxygenTimerIcon.gameObject.SetActive(true); // Mostrar imagen del cronómetro
 
     int timeLeft = diveTime;
 
@@ -157,7 +157,7 @@ private IEnumerator StartOxygenTimer()
         {
             oxygenTimerText.color = warningColor;
             if (oxygenTimerIcon != null)
-                oxygenTimerIcon.color = warningColor; // 🆕 La imagen también se pone roja
+                oxygenTimerIcon.color = warningColor; // La imagen también se pone roja
 
             if (!warningShown)
             {
@@ -177,7 +177,7 @@ private IEnumerator StartOxygenTimer()
         timeLeft--;
     }
 
-    // 🔹 Tiempo agotado
+    // Tiempo agotado
     oxygenTimerText.text = "¡Sin oxígeno!";
     oxygenTimerText.color = warningColor;
     if (oxygenTimerIcon != null)
@@ -208,12 +208,12 @@ private IEnumerator StartOxygenTimer()
 
     yield return new WaitForSeconds(1f);
 
-    // 🔹 Ocultar texto e imagen cuando el tiempo termina
+    // Ocultar texto e imagen cuando el tiempo termina
     oxygenTimerText.gameObject.SetActive(false);
     if (oxygenTimerIcon != null)
-        oxygenTimerIcon.gameObject.SetActive(false); // 🆕 Ocultar imagen
+        oxygenTimerIcon.gameObject.SetActive(false); // Ocultar imagen
 
-    // 🔹 Reiniciar escena
+    // Reiniciar escena
     UnityEngine.SceneManagement.SceneManager.LoadScene(
         UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex
     );
@@ -228,7 +228,7 @@ public void PlayerDeath()
 
 private IEnumerator HandlePlayerDeath()
 {
-    // 🔹 Detener movimiento del jugador
+    // Detener movimiento del jugador
     player.enabled = false;
     if (player.TryGetComponent<Rigidbody>(out Rigidbody rb))
     {
@@ -240,7 +240,7 @@ private IEnumerator HandlePlayerDeath()
         rb.AddForce(Vector3.up * 1.5f, ForceMode.VelocityChange);
     }
 
-    // 🔹 Mensaje opcional de advertencia
+    // Mensaje opcional de advertencia
     if (warningText != null)
     {
         warningText.text = "¡Has perdido todas las vidas!";
@@ -248,7 +248,7 @@ private IEnumerator HandlePlayerDeath()
         warningText.gameObject.SetActive(true);
     }
 
-    // 🔸 Fade out suave antes de reiniciar
+    // Fade out suave antes de reiniciar
     yield return new WaitForSeconds(2f);
 
     float alpha = 0;
@@ -261,14 +261,14 @@ private IEnumerator HandlePlayerDeath()
 
     yield return new WaitForSeconds(1f);
 
-    // 🔹 Reiniciar la escena
+    // Reiniciar la escena
     UnityEngine.SceneManagement.SceneManager.LoadScene(
         UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex
     );
 }
 
 
-    // --- 🔹 NUEVO: Actualizar contador de peces ---
+    // --- NUEVO: Actualizar contador de peces ---
     public void AddFish()
     {
         fishCount++;
@@ -307,7 +307,7 @@ private IEnumerator ShowTemporaryMessage(string message, float duration)
     warningText.color = new Color(1f, 0.85f, 0f); // Amarillo cálido
     warningText.gameObject.SetActive(true);
 
-    // 🔸 Fade In
+    // Fade In
     CanvasGroup cg = warningText.GetComponent<CanvasGroup>();
     if (cg == null)
         cg = warningText.gameObject.AddComponent<CanvasGroup>();
@@ -321,7 +321,7 @@ private IEnumerator ShowTemporaryMessage(string message, float duration)
 
     yield return new WaitForSeconds(duration);
 
-    // 🔸 Fade Out
+    // Fade Out
     while (cg.alpha > 0)
     {
         cg.alpha -= Time.deltaTime * 2f;
@@ -330,6 +330,5 @@ private IEnumerator ShowTemporaryMessage(string message, float duration)
 
     warningText.gameObject.SetActive(false);
 }
-
 
 }

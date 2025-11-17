@@ -809,7 +809,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SimpleFloat
   floatAmplitude: 0.2
   floatFrequency: 1.5
-  tiltAmplitude: 2
+  tiltAmplitude: 3
   tiltFrequency: 0.5
 --- !u!65 &476301448
 BoxCollider:
@@ -2885,7 +2885,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SimpleFloat
   floatAmplitude: 0.1
   floatFrequency: 1
-  tiltAmplitude: 0.5
+  tiltAmplitude: 1
   tiltFrequency: 0.5
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
