@@ -62,7 +62,7 @@ public TextMeshProUGUI warningText;
 
     void Update()
     {
-        if (!gameStarted && Input.anyKeyDown)
+        if (!gameStarted && (Input.anyKeyDown || Input.touchCount > 0))
         {
             gameStarted = true;
             StartCoroutine(FadeOut(menuUI));
