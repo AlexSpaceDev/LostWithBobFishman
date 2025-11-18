@@ -8,6 +8,8 @@ public class UIManager : MonoBehaviour
     [Header("Canvas Groups")]
     public CanvasGroup menuUI;
     public CanvasGroup heartsUI;
+    public CanvasGroup buttonsUI;
+    public CanvasGroup daysUI;
 
     [Header("Fade Settings")]
     public float fadeSpeed = 2f;
@@ -42,9 +44,6 @@ public TextMeshProUGUI warningText;
 
     void Start()
     {
-        menuUI.alpha = 1;
-        heartsUI.alpha = 0;
-
         if (diveButton != null)
             diveButton.SetActive(false);
 
@@ -68,6 +67,8 @@ public TextMeshProUGUI warningText;
             gameStarted = true;
             StartCoroutine(FadeOut(menuUI));
             StartCoroutine(FadeIn(heartsUI));
+            StartCoroutine(FadeIn(buttonsUI));
+            StartCoroutine(FadeIn(daysUI));
         }
     }
 
@@ -75,6 +76,11 @@ public TextMeshProUGUI warningText;
     {
         if (diveButton != null)
         diveButton.SetActive(show && !hasDived);
+    }
+
+    public void Clickprueba()
+    {
+        Debug.Log("Botón de prueba presionado");
     }
 
     public void OnDiveButtonPressed()
@@ -133,139 +139,139 @@ public TextMeshProUGUI warningText;
         oxygenRoutine = StartCoroutine(StartOxygenTimer());
     }
 
-private IEnumerator StartOxygenTimer()
-{
-    if (oxygenTimerText == null)
-        yield break;
-
-    oxygenTimerText.gameObject.SetActive(true);
-    if (oxygenTimerIcon != null) 
-        oxygenTimerIcon.gameObject.SetActive(true); // Mostrar imagen del cronómetro
-
-    int timeLeft = diveTime;
-
-    Color normalColor = Color.white;
-    Color warningColor = Color.red;
-    bool warningShown = false;
-
-    if (fadeImage != null)
-        fadeImage.color = new Color(0, 0, 0, 0);
-
-    while (timeLeft > 0)
+    private IEnumerator StartOxygenTimer()
     {
-        if (timeLeft <= 10)
+        if (oxygenTimerText == null)
+            yield break;
+
+        oxygenTimerText.gameObject.SetActive(true);
+        if (oxygenTimerIcon != null) 
+            oxygenTimerIcon.gameObject.SetActive(true); // Mostrar imagen del cronómetro
+
+        int timeLeft = diveTime;
+
+        Color normalColor = Color.white;
+        Color warningColor = Color.red;
+        bool warningShown = false;
+
+        if (fadeImage != null)
+            fadeImage.color = new Color(0, 0, 0, 0);
+
+        while (timeLeft > 0)
         {
-            oxygenTimerText.color = warningColor;
-            if (oxygenTimerIcon != null)
-                oxygenTimerIcon.color = warningColor; // La imagen también se pone roja
-
-            if (!warningShown)
+            if (timeLeft <= 10)
             {
-                warningShown = true;
-                StartCoroutine(ShowTemporaryMessage("¡Te estás quedando sin oxígeno!", 2f));
+                oxygenTimerText.color = warningColor;
+                if (oxygenTimerIcon != null)
+                    oxygenTimerIcon.color = warningColor; // La imagen también se pone roja
+
+                if (!warningShown)
+                {
+                    warningShown = true;
+                    StartCoroutine(ShowTemporaryMessage("¡Te estás quedando sin oxígeno!", 2f));
+                }
+
+                if (fadeImage != null)
+                {
+                    float blinkAlpha = Mathf.PingPong(Time.time * 2f, 0.5f);
+                    fadeImage.color = new Color(1f, 0f, 0f, blinkAlpha * 0.5f);
+                }
             }
 
-            if (fadeImage != null)
-            {
-                float blinkAlpha = Mathf.PingPong(Time.time * 2f, 0.5f);
-                fadeImage.color = new Color(1f, 0f, 0f, blinkAlpha * 0.5f);
-            }
+            oxygenTimerText.text = $"{timeLeft}s";
+            yield return new WaitForSeconds(1f);
+            timeLeft--;
         }
 
-        oxygenTimerText.text = $"{timeLeft}s";
+        // Tiempo agotado
+        oxygenTimerText.text = "¡Sin oxígeno!";
+        oxygenTimerText.color = warningColor;
+        if (oxygenTimerIcon != null)
+            oxygenTimerIcon.color = warningColor;
+
+        if (fadeImage != null)
+            fadeImage.color = new Color(0, 0, 0, 0);
+
+        player.enabled = false;
+        if (player.TryGetComponent<Rigidbody>(out Rigidbody rb))
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            rb.useGravity = false;
+            rb.AddTorque(new Vector3(0f, 0f, Random.Range(-0.5f, 0.5f)), ForceMode.VelocityChange);
+            rb.AddForce(Vector3.up * 1.5f, ForceMode.VelocityChange);
+        }
+
+        yield return new WaitForSeconds(2f);
+
+        float alpha = 0;
+        while (alpha < 1)
+        {
+            alpha += Time.deltaTime * 0.5f;
+            fadeImage.color = new Color(0, 0, 0, alpha);
+            yield return null;
+        }
+
         yield return new WaitForSeconds(1f);
-        timeLeft--;
+
+        // Ocultar texto e imagen cuando el tiempo termina
+        oxygenTimerText.gameObject.SetActive(false);
+        if (oxygenTimerIcon != null)
+            oxygenTimerIcon.gameObject.SetActive(false); // Ocultar imagen
+
+        // Reiniciar escena
+        UnityEngine.SceneManagement.SceneManager.LoadScene(
+            UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex
+        );
     }
 
-    // Tiempo agotado
-    oxygenTimerText.text = "¡Sin oxígeno!";
-    oxygenTimerText.color = warningColor;
-    if (oxygenTimerIcon != null)
-        oxygenTimerIcon.color = warningColor;
 
-    if (fadeImage != null)
-        fadeImage.color = new Color(0, 0, 0, 0);
 
-    player.enabled = false;
-    if (player.TryGetComponent<Rigidbody>(out Rigidbody rb))
+    public void PlayerDeath()
     {
-        rb.linearVelocity = Vector3.zero;
-        rb.angularVelocity = Vector3.zero;
-        rb.useGravity = false;
-        rb.AddTorque(new Vector3(0f, 0f, Random.Range(-0.5f, 0.5f)), ForceMode.VelocityChange);
-        rb.AddForce(Vector3.up * 1.5f, ForceMode.VelocityChange);
+        StartCoroutine(HandlePlayerDeath());
     }
 
-    yield return new WaitForSeconds(2f);
-
-    float alpha = 0;
-    while (alpha < 1)
+    private IEnumerator HandlePlayerDeath()
     {
-        alpha += Time.deltaTime * 0.5f;
-        fadeImage.color = new Color(0, 0, 0, alpha);
-        yield return null;
+        // Detener movimiento del jugador
+        player.enabled = false;
+        if (player.TryGetComponent<Rigidbody>(out Rigidbody rb))
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            rb.useGravity = false;
+
+            rb.AddTorque(new Vector3(0f, 0f, Random.Range(-0.5f, 0.5f)), ForceMode.VelocityChange);
+            rb.AddForce(Vector3.up * 1.5f, ForceMode.VelocityChange);
+        }
+
+        // Mensaje opcional de advertencia
+        if (warningText != null)
+        {
+            warningText.text = "¡Has perdido todas las vidas!";
+            warningText.color = Color.red;
+            warningText.gameObject.SetActive(true);
+        }
+
+        // Fade out suave antes de reiniciar
+        yield return new WaitForSeconds(2f);
+
+        float alpha = 0;
+        while (alpha < 1)
+        {
+            alpha += Time.deltaTime * 0.5f;
+            fadeImage.color = new Color(0, 0, 0, alpha);
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(1f);
+
+        // Reiniciar la escena
+        UnityEngine.SceneManagement.SceneManager.LoadScene(
+            UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex
+        );
     }
-
-    yield return new WaitForSeconds(1f);
-
-    // Ocultar texto e imagen cuando el tiempo termina
-    oxygenTimerText.gameObject.SetActive(false);
-    if (oxygenTimerIcon != null)
-        oxygenTimerIcon.gameObject.SetActive(false); // Ocultar imagen
-
-    // Reiniciar escena
-    UnityEngine.SceneManagement.SceneManager.LoadScene(
-        UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex
-    );
-}
-
-
-
-public void PlayerDeath()
-{
-    StartCoroutine(HandlePlayerDeath());
-}
-
-private IEnumerator HandlePlayerDeath()
-{
-    // Detener movimiento del jugador
-    player.enabled = false;
-    if (player.TryGetComponent<Rigidbody>(out Rigidbody rb))
-    {
-        rb.linearVelocity = Vector3.zero;
-        rb.angularVelocity = Vector3.zero;
-        rb.useGravity = false;
-
-        rb.AddTorque(new Vector3(0f, 0f, Random.Range(-0.5f, 0.5f)), ForceMode.VelocityChange);
-        rb.AddForce(Vector3.up * 1.5f, ForceMode.VelocityChange);
-    }
-
-    // Mensaje opcional de advertencia
-    if (warningText != null)
-    {
-        warningText.text = "¡Has perdido todas las vidas!";
-        warningText.color = Color.red;
-        warningText.gameObject.SetActive(true);
-    }
-
-    // Fade out suave antes de reiniciar
-    yield return new WaitForSeconds(2f);
-
-    float alpha = 0;
-    while (alpha < 1)
-    {
-        alpha += Time.deltaTime * 0.5f;
-        fadeImage.color = new Color(0, 0, 0, alpha);
-        yield return null;
-    }
-
-    yield return new WaitForSeconds(1f);
-
-    // Reiniciar la escena
-    UnityEngine.SceneManagement.SceneManager.LoadScene(
-        UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex
-    );
-}
 
 
     // --- NUEVO: Actualizar contador de peces ---
@@ -290,45 +296,54 @@ private IEnumerator HandlePlayerDeath()
     private IEnumerator FadeIn(CanvasGroup cg)
     {
         cg.gameObject.SetActive(true);
+        cg.interactable = false;      // Desactivado mientras hace fade
+        cg.blocksRaycasts = false;
+
         while (cg.alpha < 1)
         {
             cg.alpha += Time.deltaTime * fadeSpeed;
             yield return null;
         }
+
         cg.alpha = 1;
+
+        // Activar interacción después del fade
+        cg.interactable = true;
+        cg.blocksRaycasts = true;
     }
 
-private IEnumerator ShowTemporaryMessage(string message, float duration)
-{
-    if (warningText == null)
-        yield break;
-
-    warningText.text = message;
-    warningText.color = new Color(1f, 0.85f, 0f); // Amarillo cálido
-    warningText.gameObject.SetActive(true);
-
-    // Fade In
-    CanvasGroup cg = warningText.GetComponent<CanvasGroup>();
-    if (cg == null)
-        cg = warningText.gameObject.AddComponent<CanvasGroup>();
-
-    cg.alpha = 0;
-    while (cg.alpha < 1)
+    private IEnumerator ShowTemporaryMessage(string message, float duration)
     {
-        cg.alpha += Time.deltaTime * 3f;
-        yield return null;
+        if (warningText == null)
+            yield break;
+
+        warningText.text = message;
+        warningText.color = new Color(1f, 0.85f, 0f); // Amarillo cálido
+        warningText.gameObject.SetActive(true);
+
+        // Fade In
+        CanvasGroup cg = warningText.GetComponent<CanvasGroup>();
+        if (cg == null)
+            cg = warningText.gameObject.AddComponent<CanvasGroup>();
+
+        cg.alpha = 0;
+        while (cg.alpha < 1)
+        {
+            cg.alpha += Time.deltaTime * 3f;
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(duration);
+
+        // Fade Out
+        while (cg.alpha > 0)
+        {
+            cg.alpha -= Time.deltaTime * 2f;
+            yield return null;
+        }
+
+        warningText.gameObject.SetActive(false);
     }
 
-    yield return new WaitForSeconds(duration);
-
-    // Fade Out
-    while (cg.alpha > 0)
-    {
-        cg.alpha -= Time.deltaTime * 2f;
-        yield return null;
-    }
-
-    warningText.gameObject.SetActive(false);
-}
 
 }

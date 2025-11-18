@@ -35,6 +35,8 @@ Material:
     - _Float0: 0
     - _FogHeight: 0.7
     - _FogSmoothness: 0.01
+    - _Rotation: 0
+    - _RotationSpeed: 1
     m_Colors:
     - _TintColor: {r: 0.6320754, g: 0.62909395, b: 0.62909395, a: 1}
   m_BuildTextureStacks: []
