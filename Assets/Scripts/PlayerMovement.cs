@@ -43,7 +43,7 @@ public class PlayerMovement : MonoBehaviour
             moveVertical = Input.GetAxis("Vertical");
 
         Vector3 movement = new Vector3(moveHorizontal, moveVertical, 0f);
-        rb.velocity = movement * speed; // rb.linearVelocity → rb.velocity
+        rb.linearVelocity = movement * speed;
 
         if (animator != null)
         {
@@ -92,7 +92,7 @@ public class PlayerMovement : MonoBehaviour
 
         // Ajustes físicos para nadar
         rb.useGravity = false;
-        rb.drag = 1.5f; // sensación de resistencia en el agua (ajusta a tu gusto)
+        rb.linearDamping = 1.5f; // sensación de resistencia en el agua (ajusta a tu gusto)
         Debug.Log("Modo submarino activado");
     }
 
@@ -102,11 +102,10 @@ public class PlayerMovement : MonoBehaviour
         if (animator != null) animator.SetBool("isUnderWater", false);
 
         rb.useGravity = false;
-        rb.drag = 0.5f;
+        rb.linearDamping = 0.5f;
         Debug.Log("Modo superficie activado");
     }
 }
-
 
 
 
