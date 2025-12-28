@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: StylizedWaterMaterial
-  m_Shader: {fileID: -6465566751694194690, guid: 9998199d63e3c80489fbdcc25406ec50, type: 3}
+  m_Name: MOBILE_StylizedWaterMaterial
+  m_Shader: {fileID: -6465566751694194690, guid: 3990c2642daf2744987d867bec7323e6, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -44,7 +44,7 @@ Material:
     - _FoamSpeed: 0.3
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _RefrectionScale: 1
+    - _RefrectionScale: 0
     - _RefrectionSpeed: 0.05
     - _RefrectionStrength: 1
     - _RippleDensity: 40.96
@@ -53,12 +53,13 @@ Material:
     - _WaterDepth: 1.64
     - _WaveScale: 0
     - _WaveSpeed: 0.05
+    - _XRMotionVectorsPass: 1
     m_Colors:
-    - _BaseColor: {r: 0, g: 0.5372549, b: 1, a: 1}
-    - _DeepWaterColor: {r: 0, g: 0.32156864, b: 0.75471693, a: 0.3764706}
+    - _BaseColor: {r: 0, g: 0.029748475, b: 0.972549, a: 1}
+    - _DeepWaterColor: {r: 0, g: 0.36078432, b: 0.5803922, a: 0.46666667}
     - _FoamColor: {r: 1, g: 1, b: 1, a: 1}
-    - _RippleColor: {r: 0.4404593, g: 0.9406351, b: 1.90566, a: 1}
-    - _ShallowWaterColor: {r: 0.20282999, g: 1, b: 1, a: 0.7372549}
+    - _RippleColor: {r: 1, g: 1, b: 1, a: 0.15686275}
+    - _ShallowWaterColor: {r: 0.2264151, g: 0.2264151, b: 0.2264151, a: 0.7372549}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &1650633035599961519
