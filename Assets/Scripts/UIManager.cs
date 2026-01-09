@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
+using UnityEngine.InputSystem;
 
 public class UIManager : MonoBehaviour
 {
@@ -34,7 +35,7 @@ public class UIManager : MonoBehaviour
     public Image fishIcon;                // Asigna el ícono de pez aquí
 
     [Header("Warning Message UI")]
-public TextMeshProUGUI warningText;
+    public TextMeshProUGUI warningText;
 
 
     private int fishCount = 0;
@@ -62,7 +63,7 @@ public TextMeshProUGUI warningText;
 
     void Update()
     {
-        if (!gameStarted && (Input.anyKeyDown || Input.touchCount > 0))
+        if (!gameStarted && AnyInputPressed())
         {
             gameStarted = true;
             StartCoroutine(FadeOut(menuUI));
@@ -71,6 +72,39 @@ public TextMeshProUGUI warningText;
             StartCoroutine(FadeIn(daysUI));
         }
     }
+
+    bool AnyInputPressed()
+    {
+        // Teclado (PC)
+        if (Keyboard.current != null && Keyboard.current.anyKey.wasPressedThisFrame)
+            return true;
+
+        // Mouse (click)
+        if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
+            return true;
+
+        // Pantalla táctil (móvil)
+        if (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.wasPressedThisFrame)
+            return true;
+
+        // Gamepad / Joystick
+        if (Gamepad.current != null)
+            {
+                if (Gamepad.current.buttonSouth.wasPressedThisFrame ||
+                    Gamepad.current.buttonNorth.wasPressedThisFrame ||
+                    Gamepad.current.buttonEast.wasPressedThisFrame ||
+                    Gamepad.current.buttonWest.wasPressedThisFrame ||
+                    Gamepad.current.startButton.wasPressedThisFrame ||
+                    Gamepad.current.selectButton.wasPressedThisFrame)
+                    return true;
+
+                if (Gamepad.current.leftStick.ReadValue().magnitude > 0.2f)
+                    return true;
+            }
+
+        return false;
+    }
+
 
     public void ShowDiveButton(bool show)
     {

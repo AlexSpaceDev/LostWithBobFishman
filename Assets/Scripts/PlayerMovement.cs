@@ -7,6 +7,9 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody rb;
     private Animator animator;
 
+    private PlayerInputActions inputActions;
+    private Vector2 moveInput;
+
     public Collider surfaceCollider; // El collider del padre (capsula vertical)
     public Collider swimCollider;    // El collider del hijo (horizontal)
 
@@ -18,6 +21,17 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         animator = GetComponentInChildren<Animator>();
         rb.useGravity = false;
+        inputActions = new PlayerInputActions();
+    }
+
+    private void OnEnable()
+    {
+        inputActions.Player.Enable();
+    }
+
+    private void OnDisable()
+    {
+        inputActions.Player.Disable();
     }
 
     void Start()
@@ -29,12 +43,26 @@ public class PlayerMovement : MonoBehaviour
             if (animator != null) animator.SetBool("isUnderWater", true);
         }
 
-        // Asegurar estado inicial de colliders
+        /* Asegurar estado inicial de colliders
         if (surfaceCollider != null) surfaceCollider.enabled = (currentMode == MovementMode.Surface);
         if (swimCollider != null) swimCollider.enabled = (currentMode == MovementMode.Underwater);
+        */
     }
 
     void FixedUpdate()
+    {
+        // New Input System (replaces GetAxis)
+        moveInput = inputActions.Player.Move.ReadValue<Vector2>();
+
+        float x = moveInput.x;
+        float z = moveInput.y;
+
+        Vector3 move = transform.right * x + transform.forward * z;
+
+        rb.linearVelocity = move * speed;
+    }
+
+    /*void FixedUpdate()
     {
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = 0f;
@@ -62,6 +90,7 @@ public class PlayerMovement : MonoBehaviour
                 SetModelRotation(-180f);
         }
     }
+    */
 
     private void SetModelRotation(float yRotation)
     {
@@ -105,6 +134,7 @@ public class PlayerMovement : MonoBehaviour
         rb.linearDamping = 0.5f;
         Debug.Log("Modo superficie activado");
     }
+    
 }
 
 
